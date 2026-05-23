@@ -63,7 +63,7 @@ public class SmsOtpService {
         );
 
         try {
-            smsService.send(message, new String[]{ phoneNumber }, senderId, false);
+            smsService.send(message, new String[]{ phoneNumber }, false);
             log.info("Payment OTP sent to {} for order {}", phoneNumber, orderId);
         } catch (Exception e) {
             log.error("Failed to send SMS OTP to {}: {}", phoneNumber, e.getMessage());
