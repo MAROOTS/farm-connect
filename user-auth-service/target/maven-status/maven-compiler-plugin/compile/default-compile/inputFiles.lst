@@ -1,0 +1,14 @@
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/UserAuthServiceApplication.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/security/SecurityConfig.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/controller/AuthController.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/dto/RegisterRequest.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/dto/OtpVerifyRequest.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/entity/User.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/dto/AuthResponse.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/service/OtpService.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/service/EmailService.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/dto/OtpRequest.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/entity/UserRole.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/service/AuthService.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/repository/UserRepository.java
+/home/maroots/Downloads/JAVA/agriconnect/user-auth-service/src/main/java/com/agriconnect/auth/security/JwtUtil.java
