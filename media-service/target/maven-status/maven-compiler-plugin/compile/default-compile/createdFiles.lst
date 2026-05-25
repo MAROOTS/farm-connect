@@ -1,0 +1,5 @@
+com/agriconnect/media/service/MediaService.class
+com/agriconnect/media/config/MinioConfig.class
+com/agriconnect/media/controller/MediaController.class
+com/agriconnect/media/MediaServiceApplication.class
+com/agriconnect/media/security/SecurityConfig.class

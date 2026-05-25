@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  cloud:
+    gateway:
+      routes:
+        - id: media-service
+        - uri: http://localhost:8085
+        - predicates:
+        - Path=/api/media/**
+        - filters:
+        - AuthFilter
+
+        - id: user-auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: marketplace-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/marketplace/**
+          filters:
+            - AuthFilter.java
+
+        - id: farm-management-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/farms/**
+          filters:
+            - AuthFilter.java
+
+        - id: advisory-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/advisory/**
+          filters:
+            - AuthFilter.java
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+jwt:
+  secret: ${JWT_SECRET}
