@@ -10,6 +10,7 @@
         <module name="marketplace-service" />
         <module name="user-auth-service" />
         <module name="common" />
+        <module name="farm-management-service" />
         <module name="media-service" />
       </profile>
     </annotationProcessing>
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="common" options="-parameters" />
+      <module name="farm-management-service" options="-parameters" />
       <module name="marketplace-service" options="-parameters" />
       <module name="media-service" options="-parameters" />
       <module name="user-auth-service" options="-parameters" />

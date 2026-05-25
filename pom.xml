@@ -26,6 +26,7 @@
         <module>api-gateway</module>
         <module>marketplace-service</module>
         <module>media-service</module>
+        <module>farm-management-service</module>
     </modules>
 
     <properties>
