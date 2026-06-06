@@ -97,10 +97,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install dependencies
         working-directory: ./agriconnectui
@@ -108,7 +108,7 @@ jobs:
 
       - name: Build frontend
         working-directory: ./agriconnectui
-        run: npm run dev
+        run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
