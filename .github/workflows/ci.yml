@@ -108,7 +108,7 @@ jobs:
 
       - name: Build frontend
         working-directory: ./agriconnectui
-        run: npm run build
+        run: npm run dev
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
