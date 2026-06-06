@@ -5,6 +5,9 @@ spring:
   application:
     name: api-gateway
 
+  main:
+    web-application-type: reactive
+
   data:
     redis:
       host: localhost
@@ -13,12 +16,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: media-service
-        - uri: http://localhost:8085
-        - predicates:
-        - Path=/api/media/**
-        - filters:
-        - AuthFilter
 
         - id: user-auth-service
           uri: http://localhost:8081
@@ -35,21 +32,28 @@ spring:
           predicates:
             - Path=/api/marketplace/**
           filters:
-            - AuthFilter.java
+            - name: AuthFilter
 
         - id: farm-management-service
           uri: http://localhost:8083
           predicates:
             - Path=/api/farms/**
           filters:
-            - AuthFilter.java
+            - name: AuthFilter
 
         - id: advisory-service
           uri: http://localhost:8084
           predicates:
             - Path=/api/advisory/**
           filters:
-            - AuthFilter.java
+            - name: AuthFilter
+
+        - id: media-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/media/**
+          filters:
+            - name: AuthFilter
 
       globalcors:
         cors-configurations:
@@ -60,10 +64,10 @@ spring:
               - GET
               - POST
               - PUT
+              - PATCH
               - DELETE
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
-
 jwt:
   secret: ${JWT_SECRET}

@@ -3,7 +3,6 @@ package com.agriconnect.marketplace.service;
 import com.africastalking.AfricasTalking;
 import com.africastalking.SmsService;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;

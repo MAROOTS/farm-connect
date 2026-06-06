@@ -1,1 +1,20 @@
 .env
+
+set-env.sh
+*.env
+
+# Spring Boot
+target/
+*.jar
+*.war
+logs/
+.pids/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -34,9 +34,19 @@ spring:
 
 africastalking:
   username: sandbox
-  api-key: ${AT_API_KEY}
+  api-key: ${AT_API_KEY:sandbox_fallback_key}
   sender-id: AgriConnect
 
 otp:
   expiry-minutes: 5
   length: 6
+
+mpesa:
+    consumer-key: ${MPESA_CONSUMER_KEY}
+    consumer-secret: ${MPESA_CONSUMER_SECRET}
+    shortcode: ${MPESA_SHORTCODE:174379}
+    passkey: ${MPESA_PASSKEY}
+    callback-url: ${MPESA_CALLBACK_URL}
+    auth-url: https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials
+    stk-push-url: https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    stk-query-url: https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query

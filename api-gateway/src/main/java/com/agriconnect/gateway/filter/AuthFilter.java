@@ -74,7 +74,6 @@ public class AuthFilter extends
     }
 
     public static class Config {
-        // Config class required by AbstractGatewayFilterFactory
-        // Add per-route config options here later if needed
+
     }
 }

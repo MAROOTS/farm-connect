@@ -103,9 +103,14 @@ public class FarmService {
 
     public Crop updateCropStatus(String cropId,
                                  CropStatus status, String farmerId) {
+        log.info("=== UPDATE CROP STATUS ===");
+        log.info("Crop ID: {}", cropId);
+        log.info("farmerId from header: '{}'", farmerId);
+
         Crop crop = cropRepository.findById(cropId)
                 .orElseThrow(() -> new AgriConnectException(
                         "Crop not found", HttpStatus.NOT_FOUND));
+
 
         if (!crop.getFarmerId().equals(farmerId)) {
             throw new AgriConnectException(
@@ -114,7 +119,6 @@ public class FarmService {
 
         crop.setStatus(status);
 
-        // Record actual harvest date if marking as harvested
         if (status == CropStatus.HARVESTED) {
             log.info("Crop {} marked as harvested by farmer {}",
                     cropId, farmerId);

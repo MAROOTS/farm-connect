@@ -26,6 +26,7 @@ public class MarketplaceService {
     private final OrderRepository orderRepository;
     private final SmsOtpService smsOtpService;
     private final OrderEventPublisher orderEventPublisher;
+    private final MpesaService mpesaService;
 
 
 
@@ -62,6 +63,8 @@ public class MarketplaceService {
     }
 
 
+    // marketplace-service — update placeOrder() method in MarketplaceService.java
+
     @Transactional
     public Order placeOrder(OrderRequest request, String buyerId) {
         Listing listing = listingRepository.findById(request.getListingId())
@@ -92,9 +95,21 @@ public class MarketplaceService {
 
         order = orderRepository.save(order);
 
-        smsOtpService.sendPaymentOtp(
-                order.getId().toString(), request.getBuyerPhone());
+        // Initiate M-Pesa STK Push instead of SMS OTP
+        try {
+            mpesaService.initiateSTKPush(
+                    request.getBuyerPhone(),
+                    total.doubleValue(),
+                    order.getId().toString()
+            );
+            log.info("M-Pesa STK Push initiated for order {}",
+                    order.getId());
+        } catch (Exception e) {
+            log.error("M-Pesa STK Push failed: {}", e.getMessage());
+            // Don't fail the order — let user retry payment
+        }
 
+        // Publish Kafka event
         orderEventPublisher.publish(OrderEvent.builder()
                 .orderId(order.getId().toString())
                 .listingId(listing.getId().toString())

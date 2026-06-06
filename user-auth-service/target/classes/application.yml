@@ -4,7 +4,6 @@ server:
 spring:
   application:
     name: user-auth-service
-
   # PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/agriconnect_auth
@@ -32,8 +31,9 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME}        # set in environment variable
-    password: ${MAIL_PASSWORD}        # Gmail App Password, not your real password
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
     properties:
       mail:
         smtp:
