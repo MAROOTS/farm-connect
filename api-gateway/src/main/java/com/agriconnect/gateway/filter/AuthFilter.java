@@ -2,7 +2,6 @@ package com.agriconnect.gateway.filter;
 
 import com.agriconnect.gateway.security.JwtUtil;
 import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
