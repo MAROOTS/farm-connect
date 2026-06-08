@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,9 @@ public class MarketplaceService {
                 .unit(request.getUnit())
                 .quantityAvailable(request.getQuantityAvailable())
                 .category(request.getCategory())
-                .imageUrl(request.getImageUrl())
+                .imageUrls(request.getImageUrls() != null
+                        ? request.getImageUrls()
+                        : new ArrayList<>())
                 .farmerId(farmerId)
                 .farmerName(farmerName)
                 .status(ListingStatus.ACTIVE)
