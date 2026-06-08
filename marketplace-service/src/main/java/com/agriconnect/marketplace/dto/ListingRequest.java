@@ -3,10 +3,16 @@ package com.agriconnect.marketplace.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
+@Getter
+@Setter
 public class ListingRequest {
 
     @NotBlank(message = "Title is required")
@@ -28,5 +34,5 @@ public class ListingRequest {
     @NotBlank(message = "Category is required")
     private String category;
 
-    private String imageUrl;
+    private List<String> imageUrls = new ArrayList<>();
 }
