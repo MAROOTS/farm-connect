@@ -56,9 +56,11 @@ public class MarketplaceController {
     @PostMapping("/orders")
     public ResponseEntity<ApiResponse<Order>> placeOrder(
             @Valid @RequestBody OrderRequest request,
-            @RequestHeader("X-User-Id") String buyerId) {
+            @RequestHeader("X-User-Id") String buyerId,
+            @RequestHeader("X-User-Email") String buyerEmail
+    ) {
 
-        Order order = marketplaceService.placeOrder(request, buyerId);
+        Order order = marketplaceService.placeOrder(request, buyerId, buyerEmail);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
                         "Order placed. Check your phone for the payment code.", order));

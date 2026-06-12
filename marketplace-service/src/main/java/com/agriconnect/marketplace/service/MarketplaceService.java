@@ -66,10 +66,9 @@ public class MarketplaceService {
     }
 
 
-    // marketplace-service — update placeOrder() method in MarketplaceService.java
 
     @Transactional
-    public Order placeOrder(OrderRequest request, String buyerId) {
+    public Order placeOrder(OrderRequest request, String buyerId, String buyerEmail) {
         Listing listing = listingRepository.findById(request.getListingId())
                 .orElseThrow(() -> new AgriConnectException(
                         "Listing not found", HttpStatus.NOT_FOUND));
@@ -91,6 +90,7 @@ public class MarketplaceService {
                 .listingId(listing.getId())
                 .buyerId(buyerId)
                 .buyerPhone(request.getBuyerPhone())
+                .buyerEmail(buyerEmail)
                 .quantity(request.getQuantity())
                 .totalAmount(total)
                 .status(OrderStatus.PENDING_PAYMENT)
@@ -118,6 +118,10 @@ public class MarketplaceService {
                 .listingId(listing.getId().toString())
                 .buyerId(buyerId)
                 .buyerPhone(request.getBuyerPhone())
+                .buyerEmail(buyerEmail)
+                .listingTitle(listing.getTitle())
+                .farmerName(listing.getFarmerName())
+                .farmerEmail(listing.getFarmerName())
                 .quantity(request.getQuantity())
                 .totalAmount(total)
                 .status("ORDER_PLACED")
@@ -165,6 +169,8 @@ public class MarketplaceService {
                 .orderId(order.getId().toString())
                 .listingId(order.getListingId().toString())
                 .buyerId(order.getBuyerId())
+                .buyerPhone(order.getBuyerPhone())
+                .buyerEmail(order.getBuyerEmail())
                 .totalAmount(order.getTotalAmount())
                 .status("ORDER_CONFIRMED")
                 .timestamp(LocalDateTime.now())
