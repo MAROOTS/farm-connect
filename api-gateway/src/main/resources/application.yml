@@ -55,6 +55,13 @@ spring:
           filters:
             - name: AuthFilter
 
+        - id: admin-users
+          uri: http://localhost:8081
+          predicates:
+              - Path=/api/admin/**
+          filters:
+              - name: AuthFilter
+
       globalcors:
         cors-configurations:
           '[/**]':

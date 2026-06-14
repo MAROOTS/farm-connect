@@ -49,6 +49,9 @@ public class Listing {
     @Column(nullable = false)
     private String farmerName;
 
+    @Column
+    private String farmerEmail;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ListingStatus status;

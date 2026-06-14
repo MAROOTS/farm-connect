@@ -32,7 +32,7 @@ public class MarketplaceService {
 
 
     public Listing createListing(ListingRequest request,
-                                 String farmerId, String farmerName) {
+                                 String farmerId, String farmerName, String farmerEmail) {
         Listing listing = Listing.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -45,6 +45,8 @@ public class MarketplaceService {
                         : new ArrayList<>())
                 .farmerId(farmerId)
                 .farmerName(farmerName)
+                .farmerName(farmerEmail)
+                .farmerEmail(farmerEmail)
                 .status(ListingStatus.ACTIVE)
                 .build();
 

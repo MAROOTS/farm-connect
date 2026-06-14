@@ -21,6 +21,7 @@ SERVICES=(
     "farm-management-service:8083"
     "advisory-service:8084"
     "media-service:8085"
+    "notification-service:8086"
 )
 
 GREEN='\033[0;32m'

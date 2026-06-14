@@ -11,6 +11,7 @@ import MarketplacePage from "./pages/MarketplacePage";
 import FarmPage from "./pages/FarmPage";
 import AdvisoryPage from "./pages/AdvisoryPage";
 import OrdersPage from "./pages/OrdersPage";
+import AdminPage from "./pages/AdminPage";
 
 function PrivateRoute({ children }) {
   const token = useAuthStore((s) => s.token);
@@ -33,12 +34,10 @@ export default function App() {
         }}
       />
       <Routes>
-        {/* Public */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Protected — wrapped in AppLayout (sidebar + topbar) */}
         <Route
           path="/app"
           element={
@@ -53,6 +52,7 @@ export default function App() {
           <Route path="farm" element={<FarmPage />} />
           <Route path="advisory" element={<AdvisoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="admin" element={<AdminPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

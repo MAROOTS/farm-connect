@@ -6,6 +6,7 @@ import {
   ClipboardDocumentListIcon,
   CloudIcon,
   ArrowRightOnRectangleIcon,
+  ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "../../store/authStore";
 import clsx from "clsx";
@@ -60,6 +61,24 @@ export default function Sidebar() {
             {label}
           </NavLink>
         ))}
+
+        {user?.role === "ADMIN" && (
+          <NavLink
+            to="/app/admin"
+            className={({ isActive }) =>
+              clsx(
+                "flex items-center gap-2.5 px-3 py-2 rounded-[8px]",
+                "text-sm transition-colors mt-2 border-t border-[#e5e7eb] pt-3",
+                isActive
+                  ? "bg-red-50 text-red-700 font-medium"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-800",
+              )
+            }
+          >
+            <ShieldCheckIcon className="w-4 h-4 shrink-0" />
+            Admin panel
+          </NavLink>
+        )}
       </nav>
 
       {/* User + logout */}
