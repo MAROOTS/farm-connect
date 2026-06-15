@@ -45,10 +45,10 @@ const features = [
 ];
 
 const stats = [
-  { value: "2,400+", label: "Registered farmers" },
-  { value: "KES 12M+", label: "Transactions processed" },
+  { value: "1+", label: "Registered farmers" },
+  { value: "KES 100+", label: "Transactions processed" },
   { value: "18", label: "Counties covered" },
-  { value: "94%", label: "Order fulfilment rate" },
+  { value: "10%", label: "Order fulfilment rate" },
 ];
 
 export default function HomePage() {
@@ -64,7 +64,7 @@ export default function HomePage() {
               <GlobeAltIcon className="w-4 h-4 text-white" />
             </div>
             <span className="text-[15px] font-semibold text-forest-900 tracking-tight">
-              AgriConnect
+              <Link to="/">Agriconnect</Link>
             </span>
           </div>
 
@@ -106,7 +106,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 py-16 flex flex-col lg:flex-row
                         items-center gap-12">
 
-          {/* Left — text */}
+          
           <div className="flex-1 flex flex-col items-start gap-6">
             <h1 className="text-4xl md:text-5xl font-bold text-forest-900
                            leading-tight tracking-tight">
@@ -116,7 +116,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-base text-gray-500 max-w-md leading-relaxed">
-              AgriConnect links farmers, buyers, and suppliers on one platform —
+              AgriConnect links farmers, buyers, and suppliers on one platform
               with real-time weather advisories, crop tracking, and
               SMS-verified payments.
             </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Trust indicators */}
+            
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1.5">
                 <ShieldCheckIcon className="w-4 h-4 text-forest-500" />
@@ -155,7 +155,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right — image */}
+         
           <div className="flex-1 w-full lg:max-w-xl">
             <div className="relative rounded-[16px] overflow-hidden border border-[#e5e7eb]">
               <img
@@ -173,7 +173,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800">
-                    Today's advisory — Nairobi
+                    Today's advisory — Kiambu
                   </p>
                   <p className="text-[11px] text-gray-500">
                     22°C · Partly cloudy 
@@ -185,8 +185,7 @@ export default function HomePage() {
 
         </div>
       </section>
-
-      {/* ── Stats ────────────────────────────────────────────── */}
+      
       <section id="stats" className="bg-forest-900">
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -200,7 +199,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Features ─────────────────────────────────────────── */}
+      
       <section id="features" className="bg-white border-y border-[#e5e7eb]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="mb-10">
@@ -236,7 +235,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── How it works ─────────────────────────────────────── */}
+     
       <section id="how" className="bg-[#f8f7f4]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="mb-10">
@@ -279,8 +278,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ── CTA ──────────────────────────────────────────────── */}
+      
       <section className="bg-forest-900">
         <div className="max-w-6xl mx-auto px-6 py-16 flex flex-col
                         items-center text-center gap-6">
@@ -312,7 +310,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────────── */}
       <footer className="bg-white border-t border-[#e5e7eb]">
         <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row
                         items-center justify-between gap-4">
@@ -326,7 +323,7 @@ export default function HomePage() {
           </div>
 
           <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} AgriConnect. Built for Kenyan agriculture.
+            © {new Date().getFullYear()}Built for Kenyan agriculture.k8s group.
           </p>
 
           <div className="flex items-center gap-5">
