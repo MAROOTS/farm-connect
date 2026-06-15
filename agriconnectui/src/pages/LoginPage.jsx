@@ -96,7 +96,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f7f4] flex flex-col">
-      {/*Navbar */}
+      
       <header className="bg-white border-b border-[#e5e7eb]">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
@@ -122,13 +122,13 @@ export default function LoginPage() {
         </div>
       </header>
 
-      {/*Main*/}
+      
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          {/*Step 1: Email*/}
+         
           {step === "email" && (
             <div className="bg-white border border-[#e5e7eb] rounded-[16px] p-8">
-              {/* Header */}
+              
               <div className="mb-8">
                 <div
                   className="w-10 h-10 bg-forest-100 rounded-[10px]
@@ -206,7 +206,7 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              {/* Trust note */}
+             
               <div className="mt-6 pt-6 border-t border-[#f0efec] flex items-start gap-2">
                 <ShieldCheckIcon className="w-4 h-4 text-forest-400 shrink-0 mt-0.5" />
                 <p className="text-xs text-gray-400 leading-relaxed">
@@ -217,10 +217,10 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/*Step 2: OTP verify */}
+      
           {step === "otp" && (
             <div className="bg-white border border-[#e5e7eb] rounded-[16px] p-8">
-              {/* Header */}
+             
               <div className="mb-8">
                 <div
                   className="w-10 h-10 bg-forest-100 rounded-[10px]
@@ -303,7 +303,7 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              {/* Resend + back */}
+             
               <div
                 className="mt-6 pt-6 border-t border-[#f0efec]
                               flex items-center justify-between"
@@ -333,7 +333,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Bottom note */}
+          
           <p className="text-center text-xs text-gray-400 mt-6">
             By signing in you agree to our{" "}
             <a href="#" className="text-gray-500 hover:underline">
