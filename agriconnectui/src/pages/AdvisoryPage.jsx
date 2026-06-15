@@ -1,5 +1,3 @@
-// agriconnectui/src/pages/AdvisoryPage.jsx
-
 import { useState, useEffect } from "react";
 import {
   CloudIcon,
@@ -227,7 +225,7 @@ export default function AdvisoryPage() {
             className="bg-white border border-[#e5e7eb]
                           rounded-[16px] overflow-hidden"
           >
-            {/* Hero section */}
+          
             <div className="px-6 py-5 border-b border-[#f0efec]">
               <div className="flex items-start justify-between mb-4">
                 <div>
