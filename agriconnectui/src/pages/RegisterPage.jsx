@@ -1,5 +1,3 @@
-// agriconnectui/src/pages/RegisterPage.jsx
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -165,7 +163,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f7f4] flex flex-col">
-      {/*Navbar*/}
+      
       <header className="bg-white border-b border-[#e5e7eb]">
         <div
           className="max-w-6xl mx-auto px-6 h-14 flex items-center
@@ -197,10 +195,10 @@ export default function RegisterPage() {
         </div>
       </header>
 
-      {/*Main*/}
+      
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          {/*Step indicator*/}
+          
           <div className="flex items-center justify-center gap-2 mb-8">
             {steps.map((s, i) => (
               <div key={s.number} className="flex items-center gap-2">
@@ -265,7 +263,7 @@ export default function RegisterPage() {
               </div>
 
               <form onSubmit={handleStep1Next} className="flex flex-col gap-4">
-                {/* Full name */}
+              
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-gray-600">
                     Full name
@@ -298,7 +296,7 @@ export default function RegisterPage() {
                   )}
                 </div>
 
-                {/* Email */}
+                
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-gray-600">
                     Email address
@@ -330,7 +328,7 @@ export default function RegisterPage() {
                   )}
                 </div>
 
-                {/* Phone */}
+              
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-gray-600">
                     Phone number
@@ -498,7 +496,7 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/*OTP verify*/}
+  
           {step === 3 && (
             <div
               className="bg-white border border-[#e5e7eb]
@@ -524,7 +522,7 @@ export default function RegisterPage() {
               </div>
 
               <form onSubmit={handleVerifyOtp} className="flex flex-col gap-6">
-                {/* OTP boxes */}
+              
                 <div className="flex gap-2 justify-between">
                   {otp.map((digit, index) => (
                     <input
@@ -589,7 +587,7 @@ export default function RegisterPage() {
                 </button>
               </form>
 
-              {/* Resend */}
+             
               <div
                 className="mt-6 pt-6 border-t border-[#f0efec]
                               flex items-center justify-between"
