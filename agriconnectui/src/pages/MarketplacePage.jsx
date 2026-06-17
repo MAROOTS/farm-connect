@@ -1,5 +1,3 @@
-// agriconnectui/src/pages/MarketplacePage.jsx
-
 import { useState, useEffect, useRef } from "react";
 import {
   MagnifyingGlassIcon,
@@ -9,6 +7,7 @@ import {
   ShoppingCartIcon,
   PhotoIcon,
   CheckCircleIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import { marketplaceApi } from "../api/marketplace";
 import { mediaApi } from "../api/media";
@@ -49,7 +48,6 @@ function Badge({ status }) {
   );
 }
 
-// ── Create listing modal ──────────────────────────────────────
 function CreateListingModal({ onClose, onCreated }) {
   const [form, setForm] = useState({
     title: "",
@@ -69,7 +67,6 @@ function CreateListingModal({ onClose, onCreated }) {
     setForm((p) => ({ ...p, [name]: value }));
   }
 
-  // Accumulates images instead of replacing them
   function handleImageSelect(e) {
     const newFiles = Array.from(e.target.files);
     setImageFiles((prev) => [...prev, ...newFiles].slice(0, 3));
@@ -143,7 +140,6 @@ function CreateListingModal({ onClose, onCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
-          {/* ── Image upload ─────────────────────────────── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Product images
@@ -207,7 +203,6 @@ function CreateListingModal({ onClose, onCreated }) {
             )}
           </div>
 
-          {/* ── Title ────────────────────────────────────── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Title <span className="text-red-400">*</span>
@@ -225,7 +220,6 @@ function CreateListingModal({ onClose, onCreated }) {
             />
           </div>
 
-          {/* ── Description ──────────────────────────────── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Description
@@ -243,7 +237,6 @@ function CreateListingModal({ onClose, onCreated }) {
             />
           </div>
 
-          {/* ── Category ─────────────────────────────────── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Category
@@ -264,7 +257,6 @@ function CreateListingModal({ onClose, onCreated }) {
             </select>
           </div>
 
-          {/* ── Price + unit ──────────────────────────────── */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-gray-600">
@@ -306,7 +298,6 @@ function CreateListingModal({ onClose, onCreated }) {
             </div>
           </div>
 
-          {/* ── Quantity ─────────────────────────────────── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Available quantity <span className="text-red-400">*</span>
@@ -326,7 +317,6 @@ function CreateListingModal({ onClose, onCreated }) {
             />
           </div>
 
-          {/* ── Actions ──────────────────────────────────── */}
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -380,7 +370,6 @@ function CreateListingModal({ onClose, onCreated }) {
   );
 }
 
-// ── Order modal ───────────────────────────────────────────────
 function OrderModal({ listing, onClose, onOrdered }) {
   const [step, setStep] = useState("details");
   const [form, setForm] = useState({ quantity: 1, buyerPhone: "" });
@@ -499,7 +488,6 @@ function OrderModal({ listing, onClose, onOrdered }) {
           </button>
         </div>
 
-        {/* ── Step 1: Order details ───────────────────────── */}
         {step === "details" && (
           <form onSubmit={handlePlaceOrder} className="p-5 flex flex-col gap-4">
             <div className="bg-[#f8f7f4] rounded-[10px] p-3">
@@ -607,7 +595,6 @@ function OrderModal({ listing, onClose, onOrdered }) {
           </form>
         )}
 
-        {/* ── Step 2: Waiting for M-Pesa ──────────────────── */}
         {step === "waiting" && (
           <div className="p-5 flex flex-col items-center gap-4 text-center">
             {orderConfirmed ? (
@@ -700,7 +687,6 @@ function OrderModal({ listing, onClose, onOrdered }) {
           </div>
         )}
 
-        {/* ── Step 3: Manual OTP fallback ─────────────────── */}
         {step === "otp" && (
           <form
             onSubmit={handleVerifyPayment}
@@ -751,7 +737,6 @@ function OrderModal({ listing, onClose, onOrdered }) {
   );
 }
 
-// ── Main MarketplacePage ──────────────────────────────────────
 export default function MarketplacePage() {
   const user = useAuthStore((s) => s.user);
   const [listings, setListings] = useState([]);
@@ -763,6 +748,26 @@ export default function MarketplacePage() {
   const [showCreate, setShowCreate] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
   const [activeImage, setActiveImage] = useState({});
+  const [farmerRatings, setFarmerRatings] = useState({});
+
+  useEffect(() => {
+    async function loadRatings() {
+      const uniqueFarmerIds = [
+        ...new Set(listings.map((l) => l.farmerId).filter(Boolean)),
+      ];
+      const results = await Promise.allSettled(
+        uniqueFarmerIds.map((id) => marketplaceApi.getFarmerRating(id)),
+      );
+      const ratings = {};
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled") {
+          ratings[uniqueFarmerIds[i]] = r.value.data.data;
+        }
+      });
+      setFarmerRatings(ratings);
+    }
+    if (listings.length > 0) loadRatings();
+  }, [listings]);
 
   async function loadListings() {
     try {
@@ -793,7 +798,6 @@ export default function MarketplacePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">Marketplace</h2>
@@ -813,7 +817,6 @@ export default function MarketplacePage() {
         </button>
       </div>
 
-      {/* ── Tabs ───────────────────────────────────────────── */}
       <div
         className="flex items-center gap-1 bg-[#f8f7f4]
                       rounded-[8px] p-1 w-fit"
@@ -838,7 +841,6 @@ export default function MarketplacePage() {
         ))}
       </div>
 
-      {/* ── Search + category filter ────────────────────────── */}
       {tab === "browse" && (
         <div className="flex items-center gap-3 flex-wrap">
           <div className="relative flex-1 min-w-48">
@@ -878,7 +880,6 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* ── Listings grid ───────────────────────────────────── */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
@@ -928,7 +929,6 @@ export default function MarketplacePage() {
                             hover:shadow-sm hover:border-forest-200
                             transition-all flex flex-col group"
             >
-              {/* ── Image section ──────────────────────────── */}
               <div className="relative aspect-[4/3] bg-[#f0efec] overflow-hidden">
                 {/* Image */}
                 {listing.imageUrls?.length > 0 ? (
@@ -957,7 +957,6 @@ export default function MarketplacePage() {
                   </div>
                 )}
 
-                {/* Left / Right arrows — shown on hover, only if multiple images */}
                 {listing.imageUrls?.length > 1 && (
                   <>
                     <button
@@ -1042,12 +1041,10 @@ export default function MarketplacePage() {
                   </div>
                 )}
 
-                {/* Status badge — top left */}
                 <div className="absolute top-2 left-2">
                   <Badge status={listing.status} />
                 </div>
 
-                {/* Dot indicators — bottom center */}
                 {listing.imageUrls?.length > 1 && (
                   <div
                     className="absolute bottom-2 left-0 right-0
@@ -1075,7 +1072,6 @@ export default function MarketplacePage() {
                 )}
               </div>
 
-              {/* ── Card content ────────────────────────────── */}
               <div className="p-4 flex flex-col gap-3 flex-1">
                 {/* Title + price row */}
                 <div className="flex items-start justify-between gap-2">
@@ -1102,7 +1098,6 @@ export default function MarketplacePage() {
                   </div>
                 </div>
 
-                {/* Availability bar */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-[11px] text-gray-400">Availability</p>
@@ -1123,7 +1118,6 @@ export default function MarketplacePage() {
                   </div>
                 </div>
 
-                {/* Footer row */}
                 <div
                   className="flex items-center justify-between
                                 pt-2 border-t border-[#f8f7f4] mt-auto"
@@ -1131,7 +1125,7 @@ export default function MarketplacePage() {
                   <div className="flex items-center gap-1.5 min-w-0">
                     <div
                       className="w-5 h-5 bg-forest-100 rounded-full
-                                    flex items-center justify-center shrink-0"
+                                  flex items-center justify-center shrink-0"
                     >
                       <p className="text-[9px] font-semibold text-forest-800">
                         {listing.farmerName?.charAt(0).toUpperCase()}
@@ -1140,6 +1134,14 @@ export default function MarketplacePage() {
                     <p className="text-[11px] text-gray-500 truncate">
                       {listing.farmerName}
                     </p>
+                    {farmerRatings[listing.farmerId]?.totalReviews > 0 && (
+                      <div className="flex items-center gap-0.5 ml-1 shrink-0">
+                        <StarIcon className="w-3 h-3 text-amber-400" />
+                        <span className="text-[11px] text-gray-500">
+                          {farmerRatings[listing.farmerId].averageRating}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {listing.status === "ACTIVE" &&
@@ -1173,7 +1175,6 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* ── Modals ──────────────────────────────────────────── */}
       {showCreate && (
         <CreateListingModal
           onClose={() => setShowCreate(false)}

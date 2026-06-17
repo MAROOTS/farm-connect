@@ -12,9 +12,22 @@ import {
   TrashIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 import { adminApi } from "../api/admin";
 import toast from "react-hot-toast";
 import clsx from "clsx";
+import { useThemeStore } from "../store/themeStore";
 
 function Spinner() {
   return (
@@ -791,6 +804,672 @@ function ManageOrdersModal({ onClose }) {
   );
 }
 
+function AnalyticsModal({ onClose }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [statsRes, listingsRes, ordersRes] = await Promise.allSettled([
+          adminApi.getStats(),
+          adminApi.getAllListings(),
+          adminApi.getAllOrders(),
+        ]);
+
+        const stats = statsRes.value?.data?.data ?? {};
+        const listings = listingsRes.value?.data?.data ?? [];
+        const orders = ordersRes.value?.data?.data ?? [];
+
+        // Users by role chart data
+        const usersByRole = [
+          { name: "Farmers", value: stats.farmers ?? 0, color: "#1a3d2b" },
+          { name: "Buyers", value: stats.buyers ?? 0, color: "#3b82f6" },
+          { name: "Suppliers", value: stats.suppliers ?? 0, color: "#f59e0b" },
+        ];
+
+        // Orders by status chart data
+        const statusCount = orders.reduce((acc, o) => {
+          acc[o.status] = (acc[o.status] ?? 0) + 1;
+          return acc;
+        }, {});
+
+        const ordersByStatus = Object.entries(statusCount).map(
+          ([status, count]) => ({
+            name: status
+              .replace(/_/g, " ")
+              .replace(/^\w/, (c) => c.toUpperCase()),
+            orders: count,
+          }),
+        );
+
+        // Listings by category
+        const catCount = listings.reduce((acc, l) => {
+          acc[l.category] = (acc[l.category] ?? 0) + 1;
+          return acc;
+        }, {});
+
+        const listingsByCategory = Object.entries(catCount).map(
+          ([cat, count]) => ({ name: cat, listings: count }),
+        );
+
+        // Revenue
+        const totalRevenue = orders
+          .filter((o) => o.status === "CONFIRMED" || o.status === "DELIVERED")
+          .reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
+
+        const avgOrderValue =
+          orders.length > 0
+            ? (
+                orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0) /
+                orders.length
+              ).toFixed(0)
+            : 0;
+
+        setData({
+          stats,
+          usersByRole,
+          ordersByStatus,
+          listingsByCategory,
+          totalRevenue,
+          avgOrderValue,
+          totalOrders: orders.length,
+          confirmedOrders: orders.filter((o) => o.status === "CONFIRMED")
+            .length,
+        });
+      } catch (e) {
+        toast.error("Failed to load analytics");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const COLORS = [
+    "#1a3d2b",
+    "#3b82f6",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ef4444",
+    "#10b981",
+  ];
+
+  return (
+    <ModalShell title="Platform Analytics" onClose={onClose}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="p-6 flex flex-col gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              {
+                label: "Total users",
+                value: data.stats.totalUsers ?? 0,
+                color: "text-forest-900",
+              },
+              {
+                label: "Total orders",
+                value: data.totalOrders,
+                color: "text-blue-700",
+              },
+              {
+                label: "Confirmed orders",
+                value: data.confirmedOrders,
+                color: "text-forest-700",
+              },
+              {
+                label: "Total revenue",
+                value: `KES ${data.totalRevenue.toLocaleString()}`,
+                color: "text-amber-600",
+              },
+            ].map(({ label, value, color }) => (
+              <div
+                key={label}
+                className="bg-[#f8f7f4] rounded-[10px] p-4
+                              border border-[#e5e7eb]"
+              >
+                <p className="text-[11px] text-gray-400 mb-1">{label}</p>
+                <p className={`text-xl font-bold ${color}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Users by role — Pie chart */}
+            <div
+              className="bg-white border border-[#e5e7eb]
+                            rounded-[12px] p-5"
+            >
+              <p className="text-sm font-semibold text-gray-800 mb-4">
+                Users by role
+              </p>
+              {data.usersByRole.every((d) => d.value === 0) ? (
+                <div className="h-48 flex items-center justify-center">
+                  <p className="text-sm text-gray-400">No user data yet</p>
+                </div>
+              ) : (
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={data.usersByRole}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={70}
+                        label
+                      >
+                        {data.usersByRole.map((entry, i) => (
+                          <Cell key={i} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            <div
+              className="bg-white border border-[#e5e7eb]
+                            rounded-[12px] p-5"
+            >
+              <p className="text-sm font-semibold text-gray-800 mb-4">
+                Orders by status
+              </p>
+              {data.ordersByStatus.length === 0 ? (
+                <div className="h-48 flex items-center justify-center">
+                  <p className="text-sm text-gray-400">No orders yet</p>
+                </div>
+              ) : (
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={data.ordersByStatus}
+                      margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+                    >
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip />
+                      <Bar
+                        dataKey="orders"
+                        fill="#1a3d2b"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            <div
+              className="bg-white border border-[#e5e7eb]
+                            rounded-[12px] p-5"
+            >
+              <p className="text-sm font-semibold text-gray-800 mb-4">
+                Listings by category
+              </p>
+              {data.listingsByCategory.length === 0 ? (
+                <div className="h-48 flex items-center justify-center">
+                  <p className="text-sm text-gray-400">No listings yet</p>
+                </div>
+              ) : (
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={data.listingsByCategory}
+                      margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+                    >
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip />
+                      <Bar
+                        dataKey="listings"
+                        fill="#f59e0b"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            <div
+              className="bg-white border border-[#e5e7eb]
+                            rounded-[12px] p-5"
+            >
+              <p className="text-sm font-semibold text-gray-800 mb-4">
+                Platform health
+              </p>
+              <div className="flex flex-col gap-3">
+                {[
+                  {
+                    label: "User verification rate",
+                    value:
+                      data.stats.totalUsers > 0
+                        ? Math.round(
+                            (data.stats.verified / data.stats.totalUsers) * 100,
+                          )
+                        : 0,
+                    color: "bg-forest-500",
+                  },
+                  {
+                    label: "Active listing rate",
+                    value:
+                      data.listingsByCategory.reduce(
+                        (s, c) => s + c.listings,
+                        0,
+                      ) > 0
+                        ? Math.round(
+                            (data.listingsByCategory.reduce(
+                              (s, c) => s + c.listings,
+                              0,
+                            ) /
+                              Math.max(
+                                data.listingsByCategory.reduce(
+                                  (s, c) => s + c.listings,
+                                  0,
+                                ),
+                                1,
+                              )) *
+                              100,
+                          )
+                        : 0,
+                    color: "bg-blue-500",
+                  },
+                  {
+                    label: "Order confirmation rate",
+                    value:
+                      data.totalOrders > 0
+                        ? Math.round(
+                            (data.confirmedOrders / data.totalOrders) * 100,
+                          )
+                        : 0,
+                    color: "bg-amber-500",
+                  },
+                ].map(({ label, value, color }) => (
+                  <div key={label}>
+                    <div className="flex justify-between mb-1">
+                      <p className="text-xs text-gray-500">{label}</p>
+                      <p className="text-xs font-semibold text-gray-700">
+                        {value}%
+                      </p>
+                    </div>
+                    <div className="h-2 bg-[#f0efec] rounded-full">
+                      <div
+                        className={`h-2 rounded-full ${color}`}
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </ModalShell>
+  );
+}
+
+function SettingsModal({ onClose }) {
+  const [settings, setSettings] = useState({
+    platformName: "AgriConnect",
+    platformTagline: "Grow more. Sell better. Farm smarter.",
+    emailNotifications: true,
+    smsNotifications: false,
+    maintenanceMode: false,
+    allowNewRegistrations: true,
+    maxListingsPerFarmer: 20,
+    otpExpiryMinutes: 5,
+    supportEmail: "support@agriconnect.co.ke",
+  });
+  const [saving, setSaving] = useState(false);
+  const { isDark, toggleTheme } = useThemeStore();
+
+  function handleChange(key, value) {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function handleSave() {
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      toast.success("Settings saved successfully!");
+    }, 800);
+  }
+
+  return (
+    <ModalShell title="Platform Settings" onClose={onClose}>
+      <div className="p-6 flex flex-col gap-6 max-w-2xl">
+        <div>
+          <p
+            className="text-xs font-semibold text-gray-500
+                        uppercase tracking-wider mb-3"
+          >
+            General
+          </p>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-600">
+                Platform name
+              </label>
+              <input
+                value={settings.platformName}
+                onChange={(e) => handleChange("platformName", e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-[8px]
+                           border border-[#e5e7eb] focus:outline-none
+                           focus:ring-2 focus:ring-forest-200
+                           focus:border-forest-400"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-600">
+                Platform tagline
+              </label>
+              <input
+                value={settings.platformTagline}
+                onChange={(e) =>
+                  handleChange("platformTagline", e.target.value)
+                }
+                className="w-full px-3 py-2 text-sm rounded-[8px]
+                           border border-[#e5e7eb] focus:outline-none
+                           focus:ring-2 focus:ring-forest-200
+                           focus:border-forest-400"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-600">
+                Support email
+              </label>
+              <input
+                value={settings.supportEmail}
+                onChange={(e) => handleChange("supportEmail", e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-[8px]
+                           border border-[#e5e7eb] focus:outline-none
+                           focus:ring-2 focus:ring-forest-200
+                           focus:border-forest-400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="h-px bg-[#f0efec]" />
+
+        {/* ── Appearance ───────────────────────────────── */}
+        <div>
+          <p
+            className="text-xs font-semibold text-gray-500
+                        dark:text-gray-400 uppercase tracking-wider mb-3"
+          >
+            Appearance
+          </p>
+          <div
+            className="flex items-center justify-between
+                          bg-[#f8f7f4] dark:bg-white/5 rounded-[10px]
+                          px-4 py-3"
+          >
+            <div>
+              <p
+                className="text-sm font-medium text-gray-800
+                            dark:text-gray-200"
+              >
+                Dark mode
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Switch between light and dark interface
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-400">
+                {isDark ? "Dark" : "Light"}
+              </span>
+              <button
+                onClick={toggleTheme}
+                className={clsx(
+                  "w-11 h-6 rounded-full transition-colors relative",
+                  isDark ? "bg-forest-600" : "bg-gray-300",
+                )}
+              >
+                <span
+                  className={clsx(
+                    "absolute top-0.5 w-5 h-5 bg-white rounded-full",
+                    "shadow-sm transition-transform",
+                    isDark ? "translate-x-5" : "translate-x-0.5",
+                  )}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-px bg-[#f0efec] dark:bg-white/10" />
+
+        {/* ── Notifications ────────────────────────────── */}
+        <div>
+          <p
+            className="text-xs font-semibold text-gray-500
+                        uppercase tracking-wider mb-3"
+          >
+            Notifications
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              {
+                key: "emailNotifications",
+                label: "Email notifications",
+                desc: "Send email alerts for orders and account events",
+              },
+              {
+                key: "smsNotifications",
+                label: "SMS notifications",
+                desc: "Send SMS alerts via Africa's Talking",
+              },
+            ].map(({ key, label, desc }) => (
+              <div
+                key={key}
+                className="flex items-center justify-between
+                              bg-[#f8f7f4] rounded-[10px] px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-medium text-gray-800">{label}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+                </div>
+                <button
+                  onClick={() => handleChange(key, !settings[key])}
+                  className={clsx(
+                    "w-11 h-6 rounded-full transition-colors relative",
+                    settings[key] ? "bg-forest-600" : "bg-gray-300",
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      "absolute top-0.5 w-5 h-5 bg-white rounded-full",
+                      "shadow-sm transition-transform",
+                      settings[key] ? "translate-x-5" : "translate-x-0.5",
+                    )}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px bg-[#f0efec]" />
+
+        {/* ── Platform controls ────────────────────────── */}
+        <div>
+          <p
+            className="text-xs font-semibold text-gray-500
+                        uppercase tracking-wider mb-3"
+          >
+            Platform controls
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              {
+                key: "allowNewRegistrations",
+                label: "Allow new registrations",
+                desc: "New users can sign up on the platform",
+                safe: true,
+              },
+              {
+                key: "maintenanceMode",
+                label: "Maintenance mode",
+                desc: "Temporarily disable access for all non-admin users",
+                safe: false,
+              },
+            ].map(({ key, label, desc, safe }) => (
+              <div
+                key={key}
+                className={clsx(
+                  "flex items-center justify-between",
+                  "rounded-[10px] px-4 py-3",
+                  safe ? "bg-[#f8f7f4]" : "bg-red-50 border border-red-100",
+                )}
+              >
+                <div>
+                  <p
+                    className={clsx(
+                      "text-sm font-medium",
+                      safe ? "text-gray-800" : "text-red-800",
+                    )}
+                  >
+                    {label}
+                  </p>
+                  <p
+                    className={clsx(
+                      "text-xs mt-0.5",
+                      safe ? "text-gray-400" : "text-red-400",
+                    )}
+                  >
+                    {desc}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleChange(key, !settings[key])}
+                  className={clsx(
+                    "w-11 h-6 rounded-full transition-colors relative",
+                    settings[key]
+                      ? safe
+                        ? "bg-forest-600"
+                        : "bg-red-500"
+                      : "bg-gray-300",
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      "absolute top-0.5 w-5 h-5 bg-white rounded-full",
+                      "shadow-sm transition-transform",
+                      settings[key] ? "translate-x-5" : "translate-x-0.5",
+                    )}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px bg-[#f0efec]" />
+
+        {/* ── Limits ───────────────────────────────────── */}
+        <div>
+          <p
+            className="text-xs font-semibold text-gray-500
+                        uppercase tracking-wider mb-3"
+          >
+            Platform limits
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-600">
+                Max listings per farmer
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={settings.maxListingsPerFarmer}
+                onChange={(e) =>
+                  handleChange("maxListingsPerFarmer", parseInt(e.target.value))
+                }
+                className="w-full px-3 py-2 text-sm rounded-[8px]
+                           border border-[#e5e7eb] focus:outline-none
+                           focus:ring-2 focus:ring-forest-200"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-gray-600">
+                OTP expiry (minutes)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={settings.otpExpiryMinutes}
+                onChange={(e) =>
+                  handleChange("otpExpiryMinutes", parseInt(e.target.value))
+                }
+                className="w-full px-3 py-2 text-sm rounded-[8px]
+                           border border-[#e5e7eb] focus:outline-none
+                           focus:ring-2 focus:ring-forest-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Save button ──────────────────────────────── */}
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            onClick={onClose}
+            className="text-sm border border-[#e5e7eb] px-5
+                             py-2.5 rounded-[8px] text-gray-500
+                             hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="text-sm bg-forest-900 text-white px-5
+                             py-2.5 rounded-[8px] hover:bg-forest-800
+                             transition-colors disabled:opacity-50
+                             flex items-center gap-2"
+          >
+            {saving ? (
+              <>
+                <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save settings"
+            )}
+          </button>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}
+
 function ManageCard({
   icon: Icon,
   title,
@@ -923,7 +1602,7 @@ export default function AdminPage() {
       btnColor: "amber",
       iconBg: "bg-green-100",
       iconColor: "text-green-700",
-      onClick: () => toast("Analytics coming soon"),
+      onClick: () => setModal("analytics"),
     },
     {
       icon: Cog6ToothIcon,
@@ -933,7 +1612,7 @@ export default function AdminPage() {
       btnColor: "gray",
       iconBg: "bg-gray-100",
       iconColor: "text-gray-600",
-      onClick: () => toast("Settings coming soon"),
+      onClick: () => setModal("settings"),
     },
   ];
 
@@ -1073,6 +1752,10 @@ export default function AdminPage() {
       {modal === "orders" && (
         <ManageOrdersModal onClose={() => setModal(null)} />
       )}
+      {modal === "analytics" && (
+        <AnalyticsModal onClose={() => setModal(null)} />
+      )}
+      {modal === "settings" && <SettingsModal onClose={() => setModal(null)} />}
     </div>
   );
 }

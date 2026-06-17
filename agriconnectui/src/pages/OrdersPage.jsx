@@ -3,10 +3,12 @@ import {
   ClipboardDocumentListIcon,
   ShoppingCartIcon,
   ArrowRightIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import { marketplaceApi } from "../api/marketplace";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
+import StarRating from "../components/ui/StarRating";
 
 function Badge({ status }) {
   const map = {
@@ -71,11 +73,86 @@ function OrderProgress({ status }) {
     </div>
   );
 }
+function RateOrderModal({ order, onClose, onRated }) {
+  const [rating, setRating] = useState(0);
+  const [loading, setLoading] = useState(false);
 
+  async function handleSubmit() {
+    if (rating === 0) {
+      toast.error("Please select a star rating");
+      return;
+    }
+    setLoading(true);
+    try {
+      await marketplaceApi.submitReview(order.id, rating);
+      toast.success("Thank you for your review!");
+      onRated();
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.message ?? "Failed to submit review");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/40 flex items-center
+                    justify-center px-4"
+    >
+      <div
+        className="bg-white rounded-[16px] border border-[#e5e7eb]
+                      w-full max-w-sm p-6 flex flex-col items-center
+                      gap-5 text-center"
+      >
+        <div
+          className="w-12 h-12 bg-amber-100 rounded-full flex
+                        items-center justify-center"
+        >
+          <StarIcon className="w-6 h-6 text-amber-500" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-900 mb-1">
+            Rate this order
+          </p>
+          <p className="text-xs text-gray-500">
+            Order #{order.id.slice(0, 8).toUpperCase()} · How was your
+            experience with this farmer?
+          </p>
+        </div>
+
+        <StarRating value={rating} onChange={setRating} interactive size="lg" />
+
+        <div className="flex gap-3 w-full pt-1">
+          <button
+            onClick={onClose}
+            className="flex-1 text-sm border border-[#e5e7eb]
+                             py-2.5 rounded-[8px] text-gray-500
+                             hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="flex-1 bg-forest-900 text-white text-sm
+                             font-medium py-2.5 rounded-[8px]
+                             hover:bg-forest-800 transition-colors
+                             disabled:opacity-50"
+          >
+            {loading ? "Submitting..." : "Submit rating"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
+  const [rateOrder, setRateOrder] = useState(null);
+  const [reviewedIds, setReviewedIds] = useState(new Set());
 
   const FILTERS = [
     { id: "ALL", label: "All orders" },
@@ -96,6 +173,22 @@ export default function OrdersPage() {
     }
     load();
   }, []);
+  useEffect(() => {
+    async function checkReviews() {
+      const delivered = orders.filter((o) => o.status === "DELIVERED");
+      const results = await Promise.allSettled(
+        delivered.map((o) => marketplaceApi.checkReviewExists(o.id)),
+      );
+      const reviewed = new Set();
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled" && r.value.data.data) {
+          reviewed.add(delivered[i].id);
+        }
+      });
+      setReviewedIds(reviewed);
+    }
+    if (orders.length > 0) checkReviews();
+  }, [orders]);
 
   const filtered =
     filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
@@ -268,9 +361,45 @@ export default function OrdersPage() {
                   </p>
                 ))}
               </div>
+
+              {order.status === "DELIVERED" && (
+                <div
+                  className="flex items-center justify-between mt-3 pt-3
+                                border-t border-[#f0efec]"
+                >
+                  {reviewedIds.has(order.id) ? (
+                    <p
+                      className="text-xs text-forest-600 font-medium
+                                  flex items-center gap-1"
+                    >
+                      <StarIcon className="w-3.5 h-3.5 text-amber-400" />
+                      You rated this order
+                    </p>
+                  ) : (
+                    <button
+                      onClick={() => setRateOrder(order)}
+                      className="text-xs font-medium text-forest-700
+                                 hover:text-forest-900 flex items-center gap-1.5
+                                 transition-colors"
+                    >
+                      <StarIcon className="w-3.5 h-3.5" />
+                      Rate this order
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
+      )}
+      {rateOrder && (
+        <RateOrderModal
+          order={rateOrder}
+          onClose={() => setRateOrder(null)}
+          onRated={() => {
+            setReviewedIds((prev) => new Set([...prev, rateOrder.id]));
+          }}
+        />
       )}
     </div>
   );
