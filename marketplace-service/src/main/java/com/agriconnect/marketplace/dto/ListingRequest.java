@@ -20,6 +20,8 @@ public class ListingRequest {
 
     private String description;
 
+    private String farmerLocation;
+
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.1", message = "Price must be greater than 0")
     private BigDecimal pricePerUnit;
