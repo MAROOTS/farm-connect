@@ -51,6 +51,9 @@ public class Listing {
 
     @Column
     private String farmerEmail;
+    
+    @Column
+    private String farmerLocation;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
