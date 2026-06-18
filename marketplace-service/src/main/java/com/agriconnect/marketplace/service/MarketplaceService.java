@@ -36,6 +36,7 @@ public class MarketplaceService {
         Listing listing = Listing.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .farmerLocation(request.getFarmerLocation())
                 .pricePerUnit(request.getPricePerUnit())
                 .unit(request.getUnit())
                 .quantityAvailable(request.getQuantityAvailable())
