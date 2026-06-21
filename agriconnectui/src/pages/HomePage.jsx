@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   ShoppingCartIcon,
   GlobeAltIcon,
@@ -8,8 +9,10 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   DevicePhoneMobileIcon,
+  PhotoIcon,
 } from "@heroicons/react/24/outline";
 import heroImage from "../assets/image2.jpg";
+import { marketplaceApi } from "../api/marketplace";
 
 const features = [
   {
@@ -52,15 +55,25 @@ const stats = [
 ];
 
 export default function HomePage() {
+  const [featured, setFeatured] = useState([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+
+  useEffect(() => {
+    marketplaceApi
+      .getFeaturedListings()
+      .then((res) => setFeatured(res.data.data ?? []))
+      .catch(() => setFeatured([]))
+      .finally(() => setLoadingFeatured(false));
+  }, []);
   return (
     <div className="min-h-screen bg-[#f8f7f4] flex flex-col">
-
       <header className="bg-white border-b border-[#e5e7eb] sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-forest-900 rounded-[6px] flex items-center
-                            justify-center shrink-0">
+            <div
+              className="w-7 h-7 bg-forest-900 rounded-[6px] flex items-center
+                            justify-center shrink-0"
+            >
               <GlobeAltIcon className="w-4 h-4 text-white" />
             </div>
             <span className="text-[15px] font-semibold text-forest-900 tracking-tight">
@@ -69,16 +82,22 @@ export default function HomePage() {
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#features"
-               className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+            <a
+              href="#features"
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+            >
               Features
             </a>
-            <a href="#stats"
-               className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+            <a
+              href="#stats"
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+            >
               Impact
             </a>
-            <a href="#how"
-               className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+            <a
+              href="#how"
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+            >
               How it works
             </a>
           </nav>
@@ -103,22 +122,26 @@ export default function HomePage() {
       </header>
 
       <section className="bg-white border-b border-[#e5e7eb]">
-        <div className="max-w-6xl mx-auto px-6 py-16 flex flex-col lg:flex-row
-                        items-center gap-12">
-
-          
+        <div
+          className="max-w-6xl mx-auto px-6 py-16 flex flex-col lg:flex-row
+                        items-center gap-12"
+        >
           <div className="flex-1 flex flex-col items-start gap-6">
-            <h1 className="text-4xl md:text-5xl font-bold text-forest-900
-                           leading-tight tracking-tight">
-              Grow more.<br />
-              Sell better.<br />
+            <h1
+              className="text-4xl md:text-5xl font-bold text-forest-900
+                           leading-tight tracking-tight"
+            >
+              Grow more.
+              <br />
+              Sell better.
+              <br />
               Farm smarter.
             </h1>
 
             <p className="text-base text-gray-500 max-w-md leading-relaxed">
               AgriConnect links farmers, buyers, and suppliers on one platform
-              with real-time weather advisories, crop tracking, and
-              SMS-verified payments.
+              with real-time weather advisories, crop tracking, and SMS-verified
+              payments.
             </p>
 
             <div className="flex items-center gap-3 flex-wrap">
@@ -141,11 +164,12 @@ export default function HomePage() {
               </Link>
             </div>
 
-            
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1.5">
                 <ShieldCheckIcon className="w-4 h-4 text-forest-500" />
-                <span className="text-xs text-gray-400">SMS-verified payments</span>
+                <span className="text-xs text-gray-400">
+                  SMS-verified payments
+                </span>
               </div>
               <div className="w-px h-4 bg-[#e5e7eb]"></div>
               <div className="flex items-center gap-1.5">
@@ -155,7 +179,6 @@ export default function HomePage() {
             </div>
           </div>
 
-         
           <div className="flex-1 w-full lg:max-w-xl">
             <div className="relative rounded-[16px] overflow-hidden border border-[#e5e7eb]">
               <img
@@ -164,11 +187,15 @@ export default function HomePage() {
                 className="w-full h-[420px] object-cover"
               />
               {/* Weather advisory card overlaid on image */}
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95
+              <div
+                className="absolute bottom-4 left-4 right-4 bg-white/95
                               border border-[#e5e7eb] rounded-[10px] px-4 py-3
-                              flex items-center gap-3">
-                <div className="w-8 h-8 bg-forest-100 rounded-[6px] flex items-center
-                                justify-center shrink-0">
+                              flex items-center gap-3"
+              >
+                <div
+                  className="w-8 h-8 bg-forest-100 rounded-[6px] flex items-center
+                                justify-center shrink-0"
+                >
                   <CloudIcon className="w-4 h-4 text-forest-700" />
                 </div>
                 <div>
@@ -176,16 +203,15 @@ export default function HomePage() {
                     Today's advisory — Kiambu
                   </p>
                   <p className="text-[11px] text-gray-500">
-                    22°C · Partly cloudy 
+                    22°C · Partly cloudy
                   </p>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </section>
-      
+
       <section id="stats" className="bg-forest-900">
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -199,12 +225,127 @@ export default function HomePage() {
         </div>
       </section>
 
-      
+      {/*Featured produce*/}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2
+              className="text-2xl sm:text-3xl font-bold text-forest-900
+                           mb-2"
+            >
+              Fresh from our farmers
+            </h2>
+            <p className="text-sm text-gray-500">
+              Real produce listed by real farmers on AgriConnect. Sign in to
+              place an order.
+            </p>
+          </div>
+
+          {loadingFeatured ? (
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6
+                            gap-4"
+            >
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-square bg-[#f0efec]
+                                        rounded-[12px] animate-pulse"
+                />
+              ))}
+            </div>
+          ) : featured.length === 0 ? (
+            <div className="text-center py-12">
+              <PhotoIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-400">
+                Featured listings coming soon
+              </p>
+            </div>
+          ) : (
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6
+                            gap-4"
+            >
+              {featured.map((listing) => (
+                <Link key={listing.id} to="/login" className="group block">
+                  <div
+                    className="aspect-square rounded-[12px]
+                                  overflow-hidden bg-[#f8f7f4] relative
+                                  border border-[#e5e7eb]
+                                  group-hover:border-forest-300
+                                  transition-colors"
+                  >
+                    {listing.imageUrls?.[0] || listing.imageUrl ? (
+                      <img
+                        src={listing.imageUrls?.[0] || listing.imageUrl}
+                        alt={listing.title}
+                        className="w-full h-full object-cover
+                                   group-hover:scale-105 transition-transform
+                                   duration-300"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center
+                                      justify-center"
+                      >
+                        <PhotoIcon className="w-8 h-8 text-gray-300" />
+                      </div>
+                    )}
+
+                    {/* Hover overlay */}
+                    <div
+                      className="absolute inset-0 bg-black/0
+                                    group-hover:bg-black/40
+                                    transition-colors flex items-center
+                                    justify-center"
+                    >
+                      <span
+                        className="opacity-0 group-hover:opacity-100
+                                       text-white text-xs font-medium
+                                       flex items-center gap-1
+                                       transition-opacity"
+                      >
+                        Sign in to order
+                        <ArrowRightIcon className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                  <p
+                    className="text-xs font-medium text-gray-800 mt-2
+                                truncate"
+                  >
+                    {listing.title}
+                  </p>
+                  <p className="text-xs text-forest-700 font-semibold">
+                    KES {listing.pricePerUnit}/{listing.unit}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="text-center mt-8">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 bg-forest-900
+                         text-white text-sm font-medium px-5 py-2.5
+                         rounded-[8px] hover:bg-forest-800
+                         transition-colors"
+            >
+              Join AgriConnect
+              <ArrowRightIcon className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="features" className="bg-white border-y border-[#e5e7eb]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="mb-10">
-            <p className="text-xs font-medium text-forest-600 uppercase
-                          tracking-widest mb-2">
+            <p
+              className="text-xs font-medium text-forest-600 uppercase
+                          tracking-widest mb-2"
+            >
               Platform features
             </p>
             <h2 className="text-2xl font-bold text-forest-900">
@@ -220,9 +361,11 @@ export default function HomePage() {
                            hover:border-forest-200 hover:bg-forest-50
                            transition-colors group"
               >
-                <div className="w-9 h-9 bg-forest-100 rounded-[8px]
+                <div
+                  className="w-9 h-9 bg-forest-100 rounded-[8px]
                                 flex items-center justify-center mb-4
-                                group-hover:bg-forest-200 transition-colors">
+                                group-hover:bg-forest-200 transition-colors"
+                >
                   <Icon className="w-5 h-5 text-forest-700" />
                 </div>
                 <p className="text-sm font-semibold text-gray-900 mb-1.5">
@@ -235,12 +378,13 @@ export default function HomePage() {
         </div>
       </section>
 
-     
       <section id="how" className="bg-[#f8f7f4]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="mb-10">
-            <p className="text-xs font-medium text-forest-600 uppercase
-                          tracking-widest mb-2">
+            <p
+              className="text-xs font-medium text-forest-600 uppercase
+                          tracking-widest mb-2"
+            >
               How it works
             </p>
             <h2 className="text-2xl font-bold text-forest-900">
@@ -270,19 +414,24 @@ export default function HomePage() {
                 key={step}
                 className="bg-white border border-[#e5e7eb] rounded-[12px] p-6"
               >
-                <p className="text-3xl font-bold text-forest-200 mb-4">{step}</p>
-                <p className="text-sm font-semibold text-gray-900 mb-2">{title}</p>
+                <p className="text-3xl font-bold text-forest-200 mb-4">
+                  {step}
+                </p>
+                <p className="text-sm font-semibold text-gray-900 mb-2">
+                  {title}
+                </p>
                 <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-      
-      <section className="bg-forest-900">
-        <div className="max-w-6xl mx-auto px-6 py-16 flex flex-col
-                        items-center text-center gap-6">
 
+      <section className="bg-forest-900">
+        <div
+          className="max-w-6xl mx-auto px-6 py-16 flex flex-col
+                        items-center text-center gap-6"
+        >
           <div className="flex items-center gap-2">
             <DevicePhoneMobileIcon className="w-5 h-5 text-forest-300" />
             <span className="text-sm text-forest-300">
@@ -311,15 +460,20 @@ export default function HomePage() {
       </section>
 
       <footer className="bg-white border-t border-[#e5e7eb]">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row
-                        items-center justify-between gap-4">
-
+        <div
+          className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row
+                        items-center justify-between gap-4"
+        >
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-forest-900 rounded-[4px] flex items-center
-                            justify-center">
+            <div
+              className="w-5 h-5 bg-forest-900 rounded-[4px] flex items-center
+                            justify-center"
+            >
               <GlobeAltIcon className="w-3 h-3 text-white" />
             </div>
-            <span className="text-sm font-semibold text-forest-900">AgriConnect</span>
+            <span className="text-sm font-semibold text-forest-900">
+              AgriConnect
+            </span>
           </div>
 
           <p className="text-xs text-gray-400">
@@ -328,7 +482,7 @@ export default function HomePage() {
 
           <div className="flex items-center gap-5">
             {["Privacy", "Terms", "Support"].map((item) => (
-             <a 
+              <a
                 key={item}
                 href="#"
                 className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
@@ -339,7 +493,6 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-
     </div>
   );
 }

@@ -30,11 +30,10 @@ public class MarketplaceController {
     public ResponseEntity<ApiResponse<Listing>> createListing(
             @Valid @RequestBody ListingRequest request,
             @RequestHeader("X-User-Id") String farmerId,
-            @RequestHeader("X-User-Name") String farmerName,
             @RequestHeader("X-User-Email") String farmerEmail) {
 
         Listing listing = marketplaceService.createListing(
-                request, farmerId,farmerName, farmerEmail);
+                request, farmerId, farmerEmail);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Listing created", listing));
     }
@@ -137,5 +136,30 @@ public class MarketplaceController {
         orderRepository.save(order);
         return ResponseEntity.ok(ApiResponse.success(
                 "Order status updated", order));
+    }
+
+    @GetMapping("/listings/featured")
+    public ResponseEntity<ApiResponse<List<Listing>>> getFeaturedListings() {
+        List<Listing> featured = listingRepository
+                .findByFeaturedTrueAndStatusOrderByCreatedAtDesc(
+                        ListingStatus.ACTIVE)
+                .stream()
+                .limit(6)
+                .toList();
+        return ResponseEntity.ok(
+                ApiResponse.success("Featured listings", featured));
+    }
+
+    @PatchMapping("/admin/listings/{id}/featured")
+    public ResponseEntity<ApiResponse<Listing>> toggleFeatured(
+            @PathVariable UUID id,
+            @RequestParam boolean featured) {
+        Listing listing = listingRepository.findById(id)
+                .orElseThrow(() -> new AgriConnectException(
+                        "Listing not found", HttpStatus.NOT_FOUND));
+        listing.setFeatured(featured);
+        listingRepository.save(listing);
+        return ResponseEntity.ok(
+                ApiResponse.success("Listing updated", listing));
     }
 }

@@ -27,6 +27,11 @@ spring:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
 
+        - id: marketplace-featured-public
+          uri: http://localhost:8082
+          predicates:
+              - Path=/api/marketplace/listings/featured
+
         - id: marketplace-service
           uri: http://localhost:8082
           predicates:

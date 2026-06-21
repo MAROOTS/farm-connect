@@ -59,6 +59,9 @@ public class Listing {
     @Column(nullable = false)
     private ListingStatus status;
 
+    @Builder.Default
+    private boolean featured = false;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

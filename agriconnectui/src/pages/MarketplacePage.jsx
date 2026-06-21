@@ -8,7 +8,6 @@ import {
   PhotoIcon,
   CheckCircleIcon,
   StarIcon,
-  MapPinIcon,
 } from "@heroicons/react/24/outline";
 import { marketplaceApi } from "../api/marketplace";
 import { mediaApi } from "../api/media";
@@ -16,6 +15,7 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import clsx from "clsx";
 import { farmApi } from "../api/farm";
+import { useSearchParams } from "react-router-dom";
 
 const CATEGORIES = [
   "All",
@@ -778,7 +778,8 @@ export default function MarketplacePage() {
   const [listings, setListings] = useState([]);
   const [myListings, setMyListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [category, setCategory] = useState("All");
   const [tab, setTab] = useState("browse");
   const [showCreate, setShowCreate] = useState(false);

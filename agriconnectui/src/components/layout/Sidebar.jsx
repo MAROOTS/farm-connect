@@ -1,6 +1,4 @@
-// agriconnectui/src/components/layout/Sidebar.jsx
-
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   HomeIcon,
   ShoppingCartIcon,
@@ -26,15 +24,15 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-56 shrink-0 h-screen
-                      bg-white dark:bg-[#0d1f15]
+      className="hidden lg:flex lg:flex-col w-64 shrink-0
+                      h-screen bg-white dark:bg-[#0d1f15]
                       border-r border-[#e5e7eb] dark:border-[#1a3d2b]
-                      flex flex-col sticky top-0"
+                      sticky top-0"
     >
       {/* Logo */}
       <div
-        className="px-5 py-5
-                      border-b border-[#e5e7eb] dark:border-[#1a3d2b]"
+        className="px-5 py-5 border-b border-[#e5e7eb]
+                      dark:border-[#1a3d2b]"
       >
         <div className="flex items-center gap-2">
           <div
@@ -47,7 +45,7 @@ export default function Sidebar() {
             className="text-[15px] font-semibold text-forest-900
                            dark:text-forest-300 tracking-tight"
           >
-            <Link to="/">AgriConnect</Link>
+            AgriConnect
           </span>
         </div>
       </div>
@@ -73,7 +71,6 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
-        {/* Admin link — ADMIN role only */}
         {user?.role === "ADMIN" && (
           <NavLink
             to="/app/admin"
@@ -96,8 +93,8 @@ export default function Sidebar() {
 
       {/* User + logout */}
       <div
-        className="px-3 py-4
-                      border-t border-[#e5e7eb] dark:border-[#1a3d2b]"
+        className="px-3 py-4 border-t border-[#e5e7eb]
+                      dark:border-[#1a3d2b]"
       >
         <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
           <div

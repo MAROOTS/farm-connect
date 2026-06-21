@@ -16,4 +16,7 @@ public interface ListingRepository extends JpaRepository<Listing, UUID> {
     List<Listing> findByFarmerIdAndStatus(String farmerId, ListingStatus status);
 
     List<Listing> findByCategoryAndStatus(String category, ListingStatus status);
+
+    List<Listing> findByFeaturedTrueAndStatusOrderByCreatedAtDesc(
+            ListingStatus status);
 }

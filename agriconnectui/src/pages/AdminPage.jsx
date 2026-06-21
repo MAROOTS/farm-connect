@@ -11,6 +11,7 @@ import {
   ArrowPathIcon,
   TrashIcon,
   MagnifyingGlassIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import {
   BarChart,
@@ -318,6 +319,25 @@ function ManageListingsModal({ onClose }) {
     }
   }
 
+  async function handleToggleFeatured(id, currentFeatured) {
+    setUpdating(id);
+    try {
+      await adminApi.toggleFeatured(id, !currentFeatured);
+      setListings((prev) =>
+        prev.map((l) =>
+          l.id === id ? { ...l, featured: !currentFeatured } : l,
+        ),
+      );
+      toast.success(
+        !currentFeatured ? "Added to homepage" : "Removed from homepage",
+      );
+    } catch {
+      toast.error("Failed to update");
+    } finally {
+      setUpdating(null);
+    }
+  }
+
   const statusColor = {
     ACTIVE: "bg-forest-100 text-forest-800",
     SOLD_OUT: "bg-gray-100 text-gray-500",
@@ -477,6 +497,23 @@ function ManageListingsModal({ onClose }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
+                      <button
+                        disabled={updating === l.id}
+                        onClick={() => handleToggleFeatured(l.id, l.featured)}
+                        className={clsx(
+                          "p-1.5 rounded-[5px] transition-colors disabled:opacity-50",
+                          l.featured
+                            ? "bg-amber-100 text-amber-600 hover:bg-amber-200"
+                            : "bg-gray-50 text-gray-400 hover:bg-gray-100",
+                        )}
+                        title={
+                          l.featured
+                            ? "Remove from homepage"
+                            : "Feature on homepage"
+                        }
+                      >
+                        <StarIcon className="w-3.5 h-3.5" />
+                      </button>
                       {l.status === "ACTIVE" ? (
                         <button
                           disabled={updating === l.id}
@@ -1215,7 +1252,6 @@ function SettingsModal({ onClose }) {
 
         <div className="h-px bg-[#f0efec]" />
 
-        {/* ── Appearance ───────────────────────────────── */}
         <div>
           <p
             className="text-xs font-semibold text-gray-500
@@ -1264,7 +1300,6 @@ function SettingsModal({ onClose }) {
 
         <div className="h-px bg-[#f0efec] dark:bg-white/10" />
 
-        {/* ── Notifications ────────────────────────────── */}
         <div>
           <p
             className="text-xs font-semibold text-gray-500
@@ -1316,7 +1351,6 @@ function SettingsModal({ onClose }) {
 
         <div className="h-px bg-[#f0efec]" />
 
-        {/* ── Platform controls ────────────────────────── */}
         <div>
           <p
             className="text-xs font-semibold text-gray-500
@@ -1391,7 +1425,6 @@ function SettingsModal({ onClose }) {
 
         <div className="h-px bg-[#f0efec]" />
 
-        {/* ── Limits ───────────────────────────────────── */}
         <div>
           <p
             className="text-xs font-semibold text-gray-500
@@ -1437,7 +1470,6 @@ function SettingsModal({ onClose }) {
           </div>
         </div>
 
-        {/* ── Save button ──────────────────────────────── */}
         <div className="flex justify-end gap-3 pt-2">
           <button
             onClick={onClose}

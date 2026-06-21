@@ -22,4 +22,7 @@ export const marketplaceApi = {
 
   checkReviewExists: (orderId) =>
     api.get(`/marketplace/reviews/order/${orderId}/exists`),
+
+  getFeaturedListings: () => api.get('/marketplace/listings/featured'),
+
 };

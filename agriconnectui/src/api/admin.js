@@ -20,4 +20,8 @@ export const adminApi = {
     api.patch(`/marketplace/admin/orders/${id}/status`, null, {
       params: { status: s },
     }),
+
+  toggleFeatured: (id, featured) =>
+      api.patch(`/marketplace/admin/listings/${id}/featured`, null,
+          { params: { featured } }),
 };
