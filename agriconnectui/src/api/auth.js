@@ -6,4 +6,7 @@ export const authApi = {
   requestOtp: (email) => api.post("/auth/otp/request", { email }),
 
   verifyOtp: (email, otp) => api.post("/auth/otp/verify", { email, otp }),
+
+  getPublicProfile: (userId) => api.get(`/auth/users/${userId}/public`),
+
 };

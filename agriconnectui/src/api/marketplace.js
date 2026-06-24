@@ -25,4 +25,6 @@ export const marketplaceApi = {
 
   getFeaturedListings: () => api.get('/marketplace/listings/featured'),
 
+  getListingsByFarmer: (farmerId) =>
+      api.get(`/marketplace/listings/farmer/${farmerId}`),
 };

@@ -60,7 +60,7 @@ public class Listing {
     private ListingStatus status;
 
     @Builder.Default
-    private boolean featured = false;
+    private Boolean featured = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

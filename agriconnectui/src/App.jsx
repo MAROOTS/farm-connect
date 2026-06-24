@@ -12,6 +12,7 @@ import FarmPage from "./pages/FarmPage";
 import AdvisoryPage from "./pages/AdvisoryPage";
 import OrdersPage from "./pages/OrdersPage";
 import AdminPage from "./pages/AdminPage";
+import FarmerProfilePage from "./pages/FarmerProfilePage.jsx";
 
 function PrivateRoute({ children }) {
   const token = useAuthStore((s) => s.token);
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="advisory" element={<AdvisoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="admin" element={<AdminPage />} />
+            <Route path="farmer/:farmerId" element={<FarmerProfilePage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

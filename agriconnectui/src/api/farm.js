@@ -13,4 +13,7 @@ export const farmApi = {
   getOverdue: () => api.get("/farms/tasks/overdue"),
   createTask: (data) => api.post("/farms/tasks", data),
   completeTask: (id) => api.patch(`/farms/tasks/${id}/complete`),
+
+  getPublicFarm: (farmerId) => api.get(`/farms/public/${farmerId}`),
+
 };

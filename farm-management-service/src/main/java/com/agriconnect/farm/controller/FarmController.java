@@ -109,4 +109,11 @@ public class FarmController {
                 "Task marked as complete",
                 farmService.completeTask(taskId, farmerId)));
     }
+
+    @GetMapping("/public/{farmerId}")
+    public ResponseEntity<ApiResponse<Farm>> getPublicFarm(
+            @PathVariable String farmerId) {
+        Farm farm = farmService.getMyFarm(farmerId);
+        return ResponseEntity.ok(ApiResponse.success("Farm fetched", farm));
+    }
 }

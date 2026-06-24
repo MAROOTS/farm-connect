@@ -14,3 +14,4 @@ com/agriconnect/auth/controller/AuthController.class
 com/agriconnect/auth/service/OtpService.class
 com/agriconnect/auth/service/EmailService.class
 com/agriconnect/auth/UserAuthServiceApplication.class
+com/agriconnect/auth/controller/AdminController.class

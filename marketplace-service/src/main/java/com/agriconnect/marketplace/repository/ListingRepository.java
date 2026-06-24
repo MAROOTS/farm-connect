@@ -19,4 +19,5 @@ public interface ListingRepository extends JpaRepository<Listing, UUID> {
 
     List<Listing> findByFeaturedTrueAndStatusOrderByCreatedAtDesc(
             ListingStatus status);
+
 }

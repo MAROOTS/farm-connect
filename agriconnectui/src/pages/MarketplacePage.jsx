@@ -15,7 +15,7 @@ import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
 import clsx from "clsx";
 import { farmApi } from "../api/farm";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 const CATEGORIES = [
   "All",
@@ -64,14 +64,15 @@ function CreateListingModal({ onClose, onCreated }) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [farmLocation, setFarmLocation] = useState(null);
-  const [loadingFarm, setLoadingFarm]   = useState(true);
+  const [loadingFarm, setLoadingFarm] = useState(true);
 
-  useEffect(()=>{
-    farmApi.getMyFarm()
-        .then((res) => setFarmLocation(res.data.data?.location ?? null))
-        .catch(() => setFarmLocation(null))
-        .finally(() => setLoadingFarm(false));
-  },[]);
+  useEffect(() => {
+    farmApi
+      .getMyFarm()
+      .then((res) => setFarmLocation(res.data.data?.location ?? null))
+      .catch(() => setFarmLocation(null))
+      .finally(() => setLoadingFarm(false));
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -215,24 +216,29 @@ function CreateListingModal({ onClose, onCreated }) {
             )}
           </div>
 
-        <div className="flex items-center gap-2 px-3 py-2 bg-[#f8f7f4]
-                        rounded-[8px]">
-          <MapPinIcon className="w-4 h-4 text-forest-600 shrink-0" />
-          {loadingFarm ? (
-            <p className="text-xs text-gray-400">Loading your farm location...</p>
-          ) : farmLocation ? (
-            <p className="text-xs text-gray-600">
-              Listing location: <span className="font-medium text-gray-800">
-                {farmLocation}
-              </span>
-            </p>
-          ) : (
-            <p className="text-xs text-amber-600">
-              No farm location set. Add your farm location in{" "}
-              <span className="font-medium">My Farm</span> first.
-            </p>
-          )}
-        </div>
+          <div
+            className="flex items-center gap-2 px-3 py-2 bg-[#f8f7f4]
+                        rounded-[8px]"
+          >
+            <MapPinIcon className="w-4 h-4 text-forest-600 shrink-0" />
+            {loadingFarm ? (
+              <p className="text-xs text-gray-400">
+                Loading your farm location...
+              </p>
+            ) : farmLocation ? (
+              <p className="text-xs text-gray-600">
+                Listing location:{" "}
+                <span className="font-medium text-gray-800">
+                  {farmLocation}
+                </span>
+              </p>
+            ) : (
+              <p className="text-xs text-amber-600">
+                No farm location set. Add your farm location in{" "}
+                <span className="font-medium">My Farm</span> first.
+              </p>
+            )}
+          </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-600">
               Title <span className="text-red-400">*</span>
@@ -533,7 +539,7 @@ function OrderModal({ listing, onClose, onOrdered }) {
                   <MapPinIcon className="w-3 h-3 text-gray-400" />
                   {listing.farmerLocation}
                 </p>
-            )}
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -1159,35 +1165,43 @@ export default function MarketplacePage() {
                   className="flex items-center justify-between
                                 pt-2 border-t border-[#f8f7f4] mt-auto"
                 >
-                  <div className="flex items-center gap-1.5 min-w-0">
+                  <Link
+                    to={`/app/farmer/${listing.farmerId}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1.5 min-w-0 hover:opacity-75
+                               transition-opacity"
+                  >
                     <div
                       className="w-5 h-5 bg-forest-100 rounded-full
-                                  flex items-center justify-center shrink-0"
+                                    flex items-center justify-center shrink-0"
                     >
                       <p className="text-[9px] font-semibold text-forest-800">
                         {listing.farmerName?.charAt(0).toUpperCase()}
                       </p>
                     </div>
-                    <p className="text-[11px] text-gray-500 truncate">
+                    <p
+                      className="text-[11px] text-gray-500 truncate
+                                  hover:underline"
+                    >
                       {listing.farmerName}
                     </p>
                     {farmerRatings[listing.farmerId]?.totalReviews > 0 && (
-                      <div className="flex items-center gap-0.5 ml-1 shrink-0">
+                      <div className="flex items-center gap-0.5 shrink-0">
                         <StarIcon className="w-3 h-3 text-amber-400" />
                         <span className="text-[11px] text-gray-500">
                           {farmerRatings[listing.farmerId].averageRating}
                         </span>
                       </div>
                     )}
-                  </div>
-                   {listing.farmerLocation && (
-                  <div className="flex items-center gap-1 shrink-0">
-                    <MapPinIcon className="w-3 h-3 text-gray-400" />
-                    <p className="text-[11px] text-gray-500 truncate max-w-[100px]">
-                      {listing.farmerLocation}
-                    </p>
-                  </div>
-                )}
+                  </Link>
+                  {listing.farmerLocation && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <MapPinIcon className="w-3 h-3 text-gray-400" />
+                      <p className="text-[11px] text-gray-500 truncate max-w-[100px]">
+                        {listing.farmerLocation}
+                      </p>
+                    </div>
+                  )}
 
                   {listing.status === "ACTIVE" &&
                     listing.farmerId !== user?.id && (

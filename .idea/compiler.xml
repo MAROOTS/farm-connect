@@ -13,6 +13,7 @@
         <module name="marketplace-service" />
         <module name="user-auth-service" />
         <module name="advisory-service" />
+        <module name="notification-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -24,6 +25,7 @@
       <module name="farm-management-service" options="-parameters" />
       <module name="marketplace-service" options="-parameters" />
       <module name="media-service" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
       <module name="user-auth-service" options="-parameters" />
     </option>
   </component>

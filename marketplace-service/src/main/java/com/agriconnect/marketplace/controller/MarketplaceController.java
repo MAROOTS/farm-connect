@@ -162,4 +162,13 @@ public class MarketplaceController {
         return ResponseEntity.ok(
                 ApiResponse.success("Listing updated", listing));
     }
+
+    @GetMapping("/listings/farmer/{farmerId}")
+    public ResponseEntity<ApiResponse<List<Listing>>> getListingsByFarmer(
+            @PathVariable String farmerId) {
+        List<Listing> listings = listingRepository
+                .findByFarmerIdAndStatus(farmerId, ListingStatus.ACTIVE);
+        return ResponseEntity.ok(
+                ApiResponse.success("Listings fetched", listings));
+    }
 }
